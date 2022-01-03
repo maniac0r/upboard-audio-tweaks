@@ -1,0 +1,29 @@
+#R=$(ps -eLo pid,cls,rtprio,pri,nice,cmd | grep -i irq | sort -n -k 4 -k 3)
+R=$(ps -eLo pid,cls,rtprio,pri,nice,cmd | grep -v grep | grep -i '\[irq\/' | sort -n -k 4 -k 3 | sed 's/PCIe PM/PCIe_PM/' )
+OIFS=$IFS
+IFS=$'\n'
+
+( 
+  echo "PID CLS RTPRIO PRI  NI CMD IRQ_CPU_AFFINITY PROCESS_CPU_AFFININTY"
+
+  for L in $R ; do
+    P=$(echo "$L" | awk '{print $1}')
+    echo -n "$L"
+    #echo "PID:  $P"
+    I=$(echo "$L" | sed 's/.* \[irq\///' | sed 's/-.*//' )   
+    #echo "IRQ: $I"
+    if [ -z "$I" ] ; then
+      AFFINITY_IRQ=""
+    else
+      AFFINITY_IRQ=$(cat /proc/irq/$I/smp_affinity)
+      AFFINITY_IRQMASK=$(printf "\x${AFFINITY_IRQ}" | xxd -b | awk '{print $2}' | cut -c 5-8 | tr 0 _ )
+    fi
+    AFFINITY_PID=$(taskset -p $P | sed 's/.*: //')
+    AFFINITY_PIDMASK=$(printf "\x${AFFINITY_PID}" | xxd -b | awk '{print $2}' | cut -c 5-8 | tr 0 _)
+    #echo -n $'\t' "AFFINITY_IRQ=$AFFINITY_IRQ AFFINITY_IRQMASK=$AFFINITY_IRQMASK"
+    echo -n $'\t' "AFF_IRQ=$AFFINITY_IRQMASK"
+    #echo "AFFINITY_PID=$AFFINITY_PID"
+    #echo $'\t' "AFFINITY_PIDMASK=$AFFINITY_PIDMASK AFFINITY_PID=$AFFINITY_PID"
+    echo $'\t' "AFF_PID=$AFFINITY_PIDMASK"
+  done 
+) | column -t

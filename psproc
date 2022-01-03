@@ -1,0 +1,34 @@
+#!/bin/bash
+
+PRM="$1"
+
+if [ -z "$PRM" ] ; then
+  FILTER='|^RTPRIO'
+else
+  FILTER="|$1"
+fi
+#set -x
+#R=$(ps axHo user,lwp,rtprio,ni,pid,command | awk '{print $3" "$4" "$5" "$6}' | egrep -v "^-${FILTER}" | sort -n | column -t)
+R=$(ps axHo rtprio,cls,pri,ni,pid,command | awk '{print $1" "$2" "$3" "$4" "$5" "$6}' | egrep -v "^-${FILTER}" | sort -n | column -t)
+#if [ "$2" == "all" ] ; then
+#  R=$(ps axHo pid,cls,rtprio,pri,nice,user,lwp,command | awk '{print $1" "$2" "$3" "$4" "$5" "$6" "$7" "$8}' | egrep -v "^-${FILTER}" | sort -n | column -t)
+#fi
+#set +x
+OIFS=$IFS
+IFS=$'\n'
+
+(
+  echo "RTPRIO  CLS PRI NI  PID   COMMAND	PID_AFF_3210"
+
+  for L in $R ; do
+    P=$(echo "$L" | awk '{print $5}')
+    echo -n "$L"
+    #echo "PID:  $P"
+
+    AFFINITY_PID=$(taskset -p $P | sed 's/.*: //')
+    AFFINITY_PIDMASK=$(printf "\x${AFFINITY_PID}" | xxd -b | awk '{print $2}' | cut -c 5-8 | tr 0 - | tr 1 X )
+    #echo "AFFINITY_PID=$AFFINITY_PID"
+    #echo $'\t' "AFFINITY_PIDMASK=$AFFINITY_PIDMASK AFFINITY_PID=$AFFINITY_PID"
+    echo $'\t' "AFF_PID=$AFFINITY_PIDMASK"
+  done
+) | column -t | egrep --color '.*AFF_PID=X.*|'

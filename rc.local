@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+cd /root ; ./audiophilize.sh &
+
+exit 0
