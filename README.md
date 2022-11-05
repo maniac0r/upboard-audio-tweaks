@@ -7,8 +7,8 @@ kernels does not even have any local console - ssh only
     # cpu1 = eth
     #
     affinity: 0-3 = 4 [0xF]
-    T: 0 (14885) A: 0 C:    115718 Min:         3 Avg:    6.01 Max:        27
-    T: 1 (14886) A: 1 C:    115710 Min:         4 Avg:    6.14 Max:        39
-    T: 2 (14887) A: 2 C:    115702 Min:         4 Avg:    5.02 Max:        32
-    T: 3 (14888) A: 3 C:    115694 Min:         4 Avg:    5.02 Max:        31
+    T: 0 ( 2300) A: 0 C:     18293 Min:         3 Avg:    5.57 Max:        25
+    T: 1 ( 2301) A: 1 C:     18286 Min:         4 Avg:    5.57 Max:        34
+    T: 2 ( 2302) A: 2 C:     18278 Min:         4 Avg:    5.63 Max:        14
+    T: 3 ( 2303) A: 3 C:     18270 Min:         3 Avg:    4.09 Max:         7
     
