@@ -1,0 +1,16 @@
+cd linux-6.1-rc3-RT-gcc-UP
+
+make mrproper ; cp ../linux-6.1-rc3-RT.config-UP_64bit-nodebug-GCC-XDANGER9 .config
+
+export CFLAGS="-O3"
+export CXXFLAGS=$CFLAGS
+export KCFLAGS=$CFLAGS
+
+make CFLAGS="-O3" CXXFLAGS="-O3" KCFLAGS="-O3" -j 8
+
+make CFLAGS="-O3" CXXFLAGS="-O3" KCFLAGS="-O3" -j 8 bindeb-pkg
+
+
+cd ..
+
+scp `ls -tr linux-image*.deb linux-libc-dev*.deb | tail -n2` 192.168.0.145:
