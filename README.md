@@ -12,3 +12,5 @@ kernels does not even have any local console - ssh only
     T: 2 ( 2302) A: 2 C:     18278 Min:         4 Avg:    5.63 Max:        14
     T: 3 ( 2303) A: 3 C:     18270 Min:         3 Avg:    4.09 Max:         7
     
+Detailed per-cpu core view on jitter:
+![jitterplot-outputs-upgw](https://github.com/maniac0r/upboard-audio-tweaks/blob/master/jitterplot-outputs-upgw.png?raw=true)
